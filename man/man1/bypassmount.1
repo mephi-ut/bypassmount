@@ -1,0 +1,30 @@
+.\" --Dmitry Yu Okunev <dyokunev@ut.mephi.ru> 0x8E30679C
+.\"
+.TH BYPASSMOUNT 1 "NOVEMBER 2013" Linux "User Manuals"
+.SH NAME
+bypassmount \- utility to work bypass of some mountpoint
+.SH SYNOPSIS
+.B bypassmount [ -q ] <mount_point> [command] [command_argument] [command_argument]
+[...]
+.SH DESCRIPTION
+.B bypassmount
+creates new mount namespace, unmounts the
+.I "mount_point"
+in the namespace and then
+executes the
+.I command
+with appropriate arguments.
+
+If the
+.I command
+is not set,
+.B bypassmount
+will run shell by path from environment variable 
+.BR SHELL .
+
+.SH OPTIONS
+
+.B \-q
+.RS 8
+Quiet mode. Suppress all output.
+.RE
