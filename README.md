@@ -24,7 +24,7 @@ You can run shell with bypassing the mountpoint with
 
 Or you can run some command with bypassing the mountpoint, for example:
 
-    bypassmount -q -- /mnt/backup $(which du) --depth 1 -s /home/xaionaro/test/
+    bypassmount -q -- /mnt/backup $(which du) --depth 1 -s /mnt/backup/
 
 
 3. Support
