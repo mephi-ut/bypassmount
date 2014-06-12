@@ -18,7 +18,7 @@ However you can use "unshare" and "umount" combination instead of this
 utility. So the "bypassmount" may be useful for:
 * bypassing broken mountpoints (it doesn't do "stat()" and a lot of other
 garbage before the "umount2()");
-* bypassing mountpoints in one-line shell commands.
+* bypassing mountpoints in one-line shell scripts.
 
 2. Usage
 --------
