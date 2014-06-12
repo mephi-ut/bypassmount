@@ -29,7 +29,7 @@ You can run shell with bypassing the mountpoint with
 
 Or you can run some command with bypassing the mountpoint, for example:
 
-    bypassmount -q -- /mnt/backup du --depth 1 -s /mnt/backup/
+    bypassmount -q /mnt/backup -- du --depth 1 -s /mnt/backup/
 
 
 3. Support
