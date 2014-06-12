@@ -1,3 +1,6 @@
+It appeared, that the utility is useless. There's already utility "unshare" in Linux, so use it ;)
+
+
 bypassmount
 ===========
 Contents
