@@ -37,12 +37,12 @@ typedef enum flags flags_t;
 
 static flags_t flags = DEFAULT;
 
-static inline int my_execv(const char *path, char *const argv[]) {
+static inline int my_execvp(const char *path, char *const argv[]) {
 	int rc;
 
-	rc = execv(path, argv);
+	rc = execvp(path, argv);
 	if(!(flags&QUIET))
-		fprintf(stderr, "Cannot execv(\"%s\", argv): %s (errno: %i)\n", path, strerror(errno), errno);
+		fprintf(stderr, "Cannot execvp(\"%s\", argv): %s (errno: %i)\n", path, strerror(errno), errno);
 
 	return rc;
 }
@@ -69,12 +69,12 @@ static int umount_and_exec(char **argv) {
 		char *argv_exec[2] = { NULL };
 		cmd = getenv("SHELL");
 		argv_exec[1] = cmd;
-		return my_execv(cmd, argv_exec);
+		return my_execvp(cmd, argv_exec);
 	}
 
 	char **argv_exec = &argv[1];
 
-	return my_execv(cmd, argv_exec);
+	return my_execvp(cmd, argv_exec);
 }
 
 void syntax() {
