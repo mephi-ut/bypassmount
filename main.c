@@ -63,7 +63,7 @@ static int umount_and_exec(char **argv) {
 }
 
 void syntax() {
-	fprintf(stderr, "\tsyntax: bypassmount [-q] <mount point> [shell] [shell arg0] [...]\n");
+	fprintf(stderr, "\tsyntax: bypassmount [-q] <mount point> -- [shell] [shell arg0] [...]\n");
 }
 
 int main(int argc, char *argv[]) {
