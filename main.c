@@ -37,13 +37,28 @@ typedef enum flags flags_t;
 
 static flags_t flags = DEFAULT;
 
-static int umount_and_exec(char **argv) {
-	char *mountpoint = argv[1];
-	char *cmd        = argv[2];
+static inline int my_execv(const char *path, char *const argv[]) {
+	int rc;
 
+	rc = execv(path, argv);
+	if(!(flags&QUIET))
+		fprintf(stderr, "Cannot execv(\"%s\", argv): %s (errno: %i)\n", path, strerror(errno), errno);
+
+	return rc;
+}
+
+static int umount_and_exec(char **argv) {
+	char *mountpoint = argv[0];
+	char *cmd        = argv[1];
+
+	if (unshare(CLONE_NEWNS) == -1) {
+		if(!(flags&QUIET))
+			fprintf(stderr, "Cannot unshare(CLONE_NEWNS): %s (errno: %i)\n", strerror(errno), errno);
+		return errno;
+	}
 
 	if(mountpoint == NULL)
-		return -1;
+		return EINVAL;
 
 	if(umount2(mountpoint, MNT_DETACH)) {
 		if(!(flags&QUIET))
@@ -54,12 +69,12 @@ static int umount_and_exec(char **argv) {
 		char *argv_exec[2] = { NULL };
 		cmd = getenv("SHELL");
 		argv_exec[1] = cmd;
-		return execv(cmd, argv_exec);
+		return my_execv(cmd, argv_exec);
 	}
 
-	char **argv_exec = &argv[2];
+	char **argv_exec = &argv[1];
 
-	return execv(cmd, argv_exec);
+	return my_execv(cmd, argv_exec);
 }
 
 void syntax() {
@@ -67,16 +82,6 @@ void syntax() {
 }
 
 int main(int argc, char *argv[]) {
-	char *stack;
-	char *stackTop;
-	pid_t pid;
-
-	if(argc < 2) {
-		fprintf(stderr, "Not enough arguments.\n");
-		syntax();
-		return EINVAL;
-	}
-
 	int opt;
 	while((opt = getopt(argc, argv, "q")) != -1) {
 		switch(opt) {
@@ -90,17 +95,18 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	argv=&argv[optind-1];
+	if(argc-1 < optind) {
+		if (!(flags&QUIET)) {
+			fprintf(stderr, "Not enough arguments.\n");
+			syntax();
+		}
+		return EINVAL;
+	}
 
-	stack = malloc(STACK_SIZE);
-	stackTop = stack + STACK_SIZE;
+	argv=&argv[optind];
 
-	pid = clone((int (*)(void *))umount_and_exec, stackTop, CLONE_NEWNS | SIGCHLD, argv);
-	if(!(flags&QUIET))
-		printf("Clone with new mount namespace: %s\n", strerror(errno));
+	int rc = umount_and_exec(argv);
 
-	int status;
-	waitpid(pid, &status, 0);
-	return WEXITSTATUS(status)&0xff;
+	return rc;
 }
 
