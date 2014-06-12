@@ -1,6 +1,3 @@
-It appeared, that the utility is useless. There's already utility "unshare" in Linux, so use it ;)
-
-
 bypassmount
 ===========
 Contents
@@ -17,6 +14,11 @@ Contents
 This utility was been written to make "du" bypass mountpoint to be able
 to compare used space values of "du" and "df".
 
+However you can use "unshare" and "umount" combination instead of this
+utility. So the "bypassmount" may be useful for:
+* bypassing broken mountpoints (it doesn't do "stat()" and a lot of other
+garbage before the "umount2()");
+* bypassing mountpoints in one-line shell commands.
 
 2. Usage
 --------
@@ -27,7 +29,7 @@ You can run shell with bypassing the mountpoint with
 
 Or you can run some command with bypassing the mountpoint, for example:
 
-    bypassmount -q -- /mnt/backup $(which du) --depth 1 -s /mnt/backup/
+    bypassmount -q -- /mnt/backup du --depth 1 -s /mnt/backup/
 
 
 3. Support
